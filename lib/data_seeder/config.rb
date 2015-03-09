@@ -25,8 +25,12 @@ module DataSeeder
       }
     end
 
-    def loaders=(loaders)
+    def add_loaders(loaders)
       @loaders = @loaders.merge(loaders)
+    end
+
+    def add_loader(ext, loader)
+      @loaders[ext] = loader
     end
   end
 end

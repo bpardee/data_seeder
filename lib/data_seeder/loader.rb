@@ -1,6 +1,7 @@
 module DataSeeder
   module Loader
-    attr_reader :klass, :file_config
+    attr_accessor :klass, :file_config
+    attr_reader   :path, :path_minus_ext
 
     def initialize(options={})
       @only = options[:only]
@@ -22,17 +23,19 @@ module DataSeeder
     end
 
     def load(path)
-      @path = path
+      @path           = path
+      dot_index       = @path.rindex('.')
+      @path_minus_ext = @path[0, dot_index]
+      @file_config    = {}
       setup
       load_file
       teardown
+      call_file_method(:teardown)
     end
 
     def setup
-      dot_index = @path.rindex('.')
-      @klass = @path[0, dot_index].classify.constantize
+      @klass = @path_minus_ext.classify.constantize
       @old_ids = @klass.all.pluck(:id) if @purge
-      @file_config = {}
       logger.info { "Loading #{@klass.table_name}" }
     end
 
@@ -42,7 +45,6 @@ module DataSeeder
         logger.info { "  Destroying #{model_info(model)}"}
         model.destroy
       end
-      call_file_method(:teardown)
     end
 
     # The information displayed when creating, updating, or destroying a model.
