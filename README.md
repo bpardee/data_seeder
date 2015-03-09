@@ -71,6 +71,30 @@ Then you notice that you have a typo in Arghanistan so you fix it and repeat the
       Updating AF: {"name"=>["Arghanistan", "Afghanistan"]}
     DataSeeder.run took 231 msec
 
+You will probably want your test environment seeded also.  Adding the following to test/test_helper.rb
+will seed your database prior to running tests but will redirect the output to the Rails.logger instead
+of stdout.
+
+    DataSeeder.test_run
+
+TODO
+----
+
+The key_attr option described above isn't implemented yet.  You have to define an id attribute which could
+be calculated based on the code.
+
+Caching of long-running stuff via pg_dump, mysqldump, or other?
+
+Ability to specify more than 1 directory for Rails.env overrides.  Could potentially be used if you have that
+x Gigabyte seed file that you don't want to check into source control and only want run on production?
+
+Ability to stop early when loading up a large seed file for a given environment, i.e., stop after processing the
+first 10 lines when Rails.env.test?
+
+YAML should allow loading as either array or hash. (currently only does hash)
+
+CSV isn't implemented and should have options such as only: and except: for using/skipping the specified header columns.
+
 Meta
 ----
 

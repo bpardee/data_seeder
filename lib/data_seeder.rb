@@ -24,14 +24,22 @@ module DataSeeder
     config.logger
   end
 
-  def self.run
+  def self.run(new_config={})
     msec = Benchmark.ms do
+      new_config.each do |key, value|
+        self.config.send(key, value)
+      end
       Dir.chdir(config.seed_dir) do
         Dir['**/*'].each do |path|
           SeedFile.load(path) if File.file?(path)
         end
       end
     end
-    logger.debug { "DataSeeder.run took #{msec.to_i} msec" }
+    logger.info { "DataSeeder.run took #{msec.to_i} msec" }
+  end
+
+  def self.test_run(new_config={})
+    self.config.logger = Rails.logger
+    run(new_config)
   end
 end
