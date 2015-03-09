@@ -5,6 +5,8 @@ data_seeder
 
 ## Introduction
 
+TODO: Still under initial development, not quite ready for prime-time.
+
 This gem providies a simple methodology for seeding your database.  Seed files in your
 seeds directory are loaded in the database and the checksum is stored away so that the
 file will only be re-applied when it is changed.  Each row instance within a file is
