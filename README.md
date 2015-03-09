@@ -95,6 +95,13 @@ YAML should allow loading as either array or hash. (currently only does hash)
 
 CSV isn't implemented and should have options such as only: and except: for using/skipping the specified header columns.
 
+Allow multi-line config statement in seed file header?  Would somehow need to mark it as such via end-of-line mark or
+beginning-of-line mark or maybe use '#-' or '#%' for all command-type lines?
+
+The structure.sql caching within rails uses the file timestamp to determine whether to do a db:test:prepare.  This
+is error prone and forces you to do a 'touch db/structure.sql' to get around the not getting reloaded problem.  Should
+I add a utility to override this rails implementation with a sha-based one like the seed files use?
+
 Meta
 ----
 
