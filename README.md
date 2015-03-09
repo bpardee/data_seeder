@@ -43,6 +43,11 @@ And you have a corresponding db/seed/countries.txt file as follows:
     AE United Arab Emirates
     AF Arghanistan
 
+The first line in a file can define the config attributes associated with the file.  For this seed file,
+the key_attr says that it will use the 'code' attribute to lookup existing records and the line function
+returns the attribute hash containing the code from the first 2 characters and the name from the remaining
+characters.
+
 Running rake db:seed will result in the following output:
 
     # rake db:seed
