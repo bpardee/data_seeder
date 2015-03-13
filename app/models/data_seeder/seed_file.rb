@@ -28,7 +28,7 @@ module DataSeeder
           DataSeeder.logger.info { "Warning: No loader for #{path}"}
           return
         end
-        loader.load(path)
+        loader.process(path)
         save!
       end
     end

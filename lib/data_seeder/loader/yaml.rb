@@ -5,13 +5,20 @@ module DataSeeder
     class YAML
       include Loader
 
-      def load_io(io)
+      def load(io)
         if key_attribute = self.file_config[:key_attribute]
           self.file_config[:update_display_method] = key_attribute
         end
-        ::YAML.load(io.read).each do |key, attr|
-          attr[key_attribute] = key if key_attribute
-          save(attr)
+        yaml = ::YAML.load(io.read)
+        if yaml.kind_of?(Hash)
+          yaml.each do |key, attr|
+            attr[key_attribute] = key if key_attribute
+            save(attr)
+          end
+        elsif yaml.kind_of?(Array)
+          yaml.each { |attr| save(attr) }
+        else
+          raise "Don't know how to interpret #{self.path}"
         end
       end
     end

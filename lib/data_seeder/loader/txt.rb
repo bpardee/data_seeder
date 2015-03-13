@@ -3,7 +3,7 @@ module DataSeeder
     class Txt
       include Loader
 
-      def load_io(io)
+      def load(io)
         if method = self.file_config[:line]
           io.each_line do |line|
             next if line.blank? || line.match(/^\s*#/)

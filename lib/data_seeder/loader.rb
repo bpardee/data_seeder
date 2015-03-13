@@ -1,6 +1,6 @@
 module DataSeeder
   module Loader
-    attr_accessor :klass, :file_config
+    attr_accessor :klass, :file_config, :key_attribute
     attr_reader   :path, :path_minus_ext
 
     def initialize(options={})
@@ -11,7 +11,7 @@ module DataSeeder
       else
         @purge = true
       end
-      @old_ids = []
+      @old_keys = []
     end
 
     def config
@@ -22,28 +22,34 @@ module DataSeeder
       DataSeeder.logger
     end
 
-    def load(path)
+    def process(path)
       @path           = path
       dot_index       = @path.rindex('.')
       @path_minus_ext = @path[0, dot_index]
       @file_config    = {}
-      setup
-      load_file
-      teardown
+      File.open(@path, 'r') do |fin|
+        load_file_config(fin)
+        setup
+        load(fin)
+        teardown
+      end
       call_file_method(:teardown)
     end
 
     def setup
       @klass = @path_minus_ext.classify.constantize
-      @old_ids = @klass.all.pluck(:id) if @purge
+      @key_attribute = self.file_config[:key_attribute] || :id
+      @old_keys = @klass.all.pluck(@key_attribute).map(&:to_s) if @purge
       logger.info { "Loading #{@klass.table_name}" }
+      call_file_method(:setup)
     end
 
     def teardown
-      @old_ids.each do |id|
-        model = @klass.find(id)
-        logger.info { "  Destroying #{model_info(model)}"}
-        model.destroy
+      @old_keys.each do |key|
+        if model = @klass.find_by(@key_attribute => key)
+          logger.info { "  Destroying #{model_info(model)}"}
+          model.destroy
+        end
       end
     end
 
@@ -51,39 +57,31 @@ module DataSeeder
     # The changes argument will be the model.changes on an update.
     def model_info(model, changes=nil)
       if changes
-        attr = @file_config[:update_display_method] || :id
+        attr = @file_config[:update_display_method] || @key_attribute
         "#{model.send(attr)}: #{changes.inspect}"
       else
         model.inspect
       end
     end
 
-    def load_file
-      File.open(@path, 'r') do |fin|
-        load_file_config(fin)
-        load_io(fin)
-      end
-    end
-
     def load_file_config(fin)
       config_line = fin.readline
-      fin.seek(0)
       if match = config_line.match(/^\s*#\s*config:(.*)/)
         @file_config = eval(match[1])
+      else
+        fin.seek(0)
       end
-      # We need to do this here instead of setup so we can have the file_config filled
-      call_file_method(:setup)
     end
 
-    def load_io(fin)
-      throw 'Must override load_io or load_file'
+    def load(fin)
+      throw 'Must override load'
     end
 
     def save(attr)
-      id = (attr['id'] || attr[:id]).try(:to_i)
-      raise "No id in #{attr.inspect}" unless id
-      @old_ids.delete(id)
-      model = @klass.find_by(id: id) || @klass.new(id: id)
+      key = attr[@key_attribute.to_s] || attr[@key_attribute.to_sym]
+      raise "No #{@key_attribute} in #{attr.inspect}" unless key
+      @old_keys.delete(key.to_s)
+      model = @klass.find_or_initialize_by(@key_attribute => key)
       model.attributes = attr
       save_model(model)
     end

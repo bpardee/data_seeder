@@ -102,6 +102,19 @@ The structure.sql caching within rails uses the file timestamp to determine whet
 is error prone and forces you to do a 'touch db/structure.sql' to get around the not getting reloaded problem.  Should
 I add a utility to override this rails implementation with a sha-based one like the seed files use?
 
+Add 'sql' loader (with disclaimer that it will temporarily truncate the table)
+
+I want to allow different seeding for different environments.  For instance development might have a bunch of dummy
+data useful for getting an environment up and running.  I'm thinking either the seed_dir similar to like a PATH
+environment variable where the first one found would override the others, or maybe make it automatic based on the
+directory names and the environment (seed.development/state.yml would override seed/state.yml).
+
+The test environment will be the one that will constantly being seeded after migrations or branch changes.  Some of
+the seed files might be large and take a long time to seed.  The above
+strategy using seed.test might be useful but it might also be useful to have a preprocessor type such as .sh so for
+instance you might have seed.test/table_with_lotsa_rows.csv.sh which might consist of the line
+'head -20 ../seed/table_with_lotsa_rows.csv'
+
 Meta
 ----
 
