@@ -21,4 +21,5 @@ end
 
 group :test do
   gem 'minitest-rails'
+  gem 'sqlite3'
 end
