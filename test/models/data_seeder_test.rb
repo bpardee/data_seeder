@@ -118,7 +118,7 @@ describe DataSeeder, :model do
 
   def setup_seed_dir(name, *files)
     dir_name = seed_dir_name(name)
-    Dir.mkdir(dir_name)
+    FileUtils.mkdir_p(dir_name)
     files.each do |file|
       FileUtils.cp(Rails.root.join('db', 'seed.test', file), dir_name)
     end
