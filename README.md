@@ -78,7 +78,8 @@ of stdout.
 
 ## Loaders
 
-data_seeder has default loaders for txt, csv, json and yml but you can also create your own custom loaders.
+data_seeder has default loaders for txt, csv, json and yml extensions but you can also create
+your own custom loaders.
 For instance, suppose you had the following tables:
 
     create_table "app_errors", force: :cascade do |t|
