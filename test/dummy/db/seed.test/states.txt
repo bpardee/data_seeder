@@ -1,4 +1,4 @@
-# config: { key_attribute: :code, line: ->(line) { { code: line[0,2], name: line[3...-1] } } }
+# config: { key_attribute: 'code', line: ->(line) { { code: line[0,2], name: line[3...-1] } } }
 AL Alabama
 AK Alaska
 AR Arkansas

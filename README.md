@@ -40,13 +40,14 @@ the following table:
 
 And you have a corresponding db/seed/countries.txt file as follows:
 
-    # config: { key_attr: 'code', line: ->(line) { { code: line[0,2], name: line[3...-1] } } }
+    # config: { key_attribute: 'code', line: ->(line) { { code: line[0,2], name: line[3...-1] } } }
     AD Andorra
     AE United Arab Emirates
     AF Arghanistan
 
 The first line in a file can define the config attributes associated with the file.  For this seed file,
-the key_attr says that it will use the 'code' attribute to lookup existing records and the line function
+the key_attribute says that it will use the 'code' attribute to lookup existing records (defaults to 'id')
+and the line function
 defines how the line is converted to an attribute hash defining the instance.
 
 Running rake db:seed will result in the following output:
@@ -79,9 +80,6 @@ of stdout.
 
 TODO
 ----
-
-The key_attr option described above isn't implemented yet.  You have to define an id attribute which could
-be calculated based on the code.
 
 Caching of long-running stuff via pg_dump, mysqldump, or other?
 
