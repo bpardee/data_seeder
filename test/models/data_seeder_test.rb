@@ -1,16 +1,16 @@
 require 'test_helper'
 
 describe DataSeeder, :model do
-  before do
-    @name = 'test1'
-    @seed_dir = setup_seed_dir(@name, 'countries.txt', 'states.txt')
-  end
+  describe 'when run with txt files' do
+    before do
+      @name = 'test1'
+      @seed_dir = setup_seed_dir(@name, 'countries.txt', 'states.txt')
+    end
 
-  after do
-    cleanup_seed_dir('test1')
-  end
+    after do
+      cleanup_seed_dir(@name)
+    end
 
-  describe 'when run' do
     it 'should load seed files' do
       modify_seed_file(@name, 'states.txt') do |body|
         body.sub('KY Kentucky', 'KV Kentucky').sub('VT Vermont', 'VT Vermount')
@@ -28,6 +28,35 @@ describe DataSeeder, :model do
       assert_equal 'Kentucky', State.find_by(code: 'KY').try(:name)
       assert_equal 'Vermont', State.find_by(code: 'VT').try(:name)
       assert_nil   State.find_by(code: 'KV')
+    end
+  end
+
+  %w(csv json yml).each do |loader_type|
+    describe "when run with #{loader_type} files" do
+      before do
+        @name     = "test.#{loader_type}"
+        @file     = "states.#{loader_type}"
+        @seed_dir = setup_seed_dir(@name, @file)
+      end
+
+      after do
+        cleanup_seed_dir(@name)
+      end
+
+      it 'should load seed files' do
+        modify_seed_file(@name, @file) do |body|
+          body.sub('Alaska', 'Alaskaska')
+        end
+        DataSeeder.run(seed_dir: @seed_dir)
+        assert_equal 50, State.count
+        assert_equal 'Alaskaska', State.find_by(code: 'AK').try(:name)
+        modify_seed_file(@name, @file) do |body|
+          body.sub('Alaskaska', 'Alaska')
+        end
+        DataSeeder.run(seed_dir: @seed_dir)
+        assert_equal 50, State.count
+        assert_equal 'Alaska', State.find_by(code: 'AK').try(:name)
+      end
     end
   end
 

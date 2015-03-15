@@ -1,3 +1,4 @@
+# config: { key_attribute: 'code' }
 AK:
   :name: Alaska
 AL:
@@ -12,8 +13,6 @@ CO:
   :name: Colorado
 CT:
   :name: Connecticut
-DC:
-  :name: District of Columbia
 DE:
   :name: Delaware
 FL:

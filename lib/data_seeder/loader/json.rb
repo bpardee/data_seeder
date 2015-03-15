@@ -6,8 +6,13 @@ module DataSeeder
       include Loader
       def load(io)
         json = ::JSON.parse(io.read)
-        Array(json).each do |attr|
-          save(attr)
+        if json.kind_of?(Hash)
+          json.each do |key, attr|
+            attr[self.key_attribute] = key if self.key_attribute
+            save(attr)
+          end
+        else
+          Array(json).each { |attr| save(attr) }
         end
       end
     end

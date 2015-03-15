@@ -13,17 +13,21 @@
 
 ActiveRecord::Schema.define(version: 20150313172719) do
 
+  create_table "app_errors", force: :cascade do |t|
+    t.integer "app_id"
+    t.string  "code"
+    t.string  "message"
+  end
+
+  add_index "app_errors", ["app_id"], name: "index_app_errors_on_app_id"
+
   create_table "apps", force: :cascade do |t|
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "name"
   end
 
   create_table "countries", force: :cascade do |t|
-    t.string   "code"
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "code"
+    t.string "name"
   end
 
   create_table "data_seeder_seed_files", force: :cascade do |t|
@@ -33,21 +37,9 @@ ActiveRecord::Schema.define(version: 20150313172719) do
 
   add_index "data_seeder_seed_files", ["path"], name: "index_data_seeder_seed_files_on_path", unique: true
 
-  create_table "errors", force: :cascade do |t|
-    t.integer  "app_id"
-    t.string   "code"
-    t.string   "message"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "errors", ["app_id"], name: "index_errors_on_app_id"
-
   create_table "states", force: :cascade do |t|
-    t.string   "code"
-    t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "code"
+    t.string "name"
   end
 
 end

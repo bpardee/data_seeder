@@ -6,13 +6,10 @@ module DataSeeder
       include Loader
 
       def load(io)
-        if key_attribute = self.file_config[:key_attribute]
-          self.file_config[:update_display_method] = key_attribute
-        end
         yaml = ::YAML.load(io.read)
         if yaml.kind_of?(Hash)
           yaml.each do |key, attr|
-            attr[key_attribute] = key if key_attribute
+            attr[self.key_attribute] = key if self.key_attribute
             save(attr)
           end
         elsif yaml.kind_of?(Array)

@@ -1,3 +1,4 @@
+# config: { key_attribute: 'code' }
 {
     "AK": {
         "name": "Alaska"
@@ -19,9 +20,6 @@
     },
     "CT": {
         "name": "Connecticut"
-    },
-    "DC": {
-        "name": "District of Columbia"
     },
     "DE": {
         "name": "Delaware"

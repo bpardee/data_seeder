@@ -18,10 +18,11 @@ module DataSeeder
 
     def default_loaders
       {
+        'csv'  => Loader::CSV.new,
         'json' => Loader::JSON.new,
+        'txt'  => Loader::Txt.new,
         'yaml' => Loader::YAML.new,
         'yml'  => Loader::YAML.new,
-        'txt'  => Loader::Txt.new,
       }
     end
 

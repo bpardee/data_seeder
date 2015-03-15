@@ -1,4 +1,4 @@
-# This file is configed in the Country model
+# This file is configured in the Country model
 AD Andorra
 AE United Arab Emirates
 AF Afghanistan

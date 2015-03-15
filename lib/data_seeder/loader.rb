@@ -112,7 +112,7 @@ module DataSeeder
   end
 end
 
-#require 'data_seeder/loader/csv'
+require 'data_seeder/loader/csv'
 require 'data_seeder/loader/json'
 require 'data_seeder/loader/yaml'
 require 'data_seeder/loader/txt'
