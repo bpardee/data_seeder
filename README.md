@@ -1,4 +1,4 @@
-data_seeder
+data_seeder [![Build Status](https://secure.travis-ci.org/bpardee/data_seeder.png?branch=master)](http://travis-ci.org/bpardee/data_seeder)
 ====================
 
 * http://github.com/bpardee/data_seeder
