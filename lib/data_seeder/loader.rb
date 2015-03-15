@@ -26,6 +26,7 @@ module DataSeeder
       @path           = path
       dot_index       = @path.rindex('.')
       @path_minus_ext = @path[0, dot_index]
+      @klass          = @path_minus_ext.classify.constantize
       @file_config    = {}
       File.open(@path, 'r') do |fin|
         load_file_config(fin)
@@ -37,7 +38,6 @@ module DataSeeder
     end
 
     def setup
-      @klass = @path_minus_ext.classify.constantize
       @key_attribute = self.file_config[:key_attribute] || :id
       @old_keys = @klass.all.pluck(@key_attribute).map(&:to_s) if @purge
       logger.info { "Loading #{@klass.table_name}" }
@@ -70,6 +70,9 @@ module DataSeeder
         @file_config = eval(match[1])
       else
         fin.seek(0)
+        if @klass.respond_to?(:data_seeder_config)
+          @file_config = @klass.data_seeder_config
+        end
       end
     end
 

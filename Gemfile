@@ -12,3 +12,13 @@ gemspec
 
 # To use debugger
 # gem 'debugger'
+group :test, :development do
+  gem 'pry'
+  gem 'pry-doc'
+  gem 'pry-plus', :git => 'git://github.com/avantcredit/pry-plus'
+  gem 'pry-rails'
+end
+
+group :test do
+  gem 'minitest-rails'
+end

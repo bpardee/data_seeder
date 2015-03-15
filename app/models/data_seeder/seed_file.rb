@@ -3,13 +3,11 @@ require 'digest'
 module DataSeeder
   class SeedFile < ActiveRecord::Base
     def self.file_hash
-      @path_hash ||= begin
-        hash = {}
-        all.each do |seed_file|
-          hash[seed_file.path] = seed_file
-        end
-        hash
+      hash = {}
+      all.each do |seed_file|
+        hash[seed_file.path] = seed_file
       end
+      hash
     end
 
     def self.load(path)
