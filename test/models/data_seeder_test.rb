@@ -3,7 +3,7 @@ require 'test_helper'
 describe DataSeeder, :model do
   describe 'when run with txt files' do
     before do
-      @name = 'test1'
+      @name = 'test.txt'
       @seed_dir = setup_seed_dir(@name, 'countries.txt', 'states.txt')
     end
 
@@ -59,6 +59,62 @@ describe DataSeeder, :model do
       end
     end
   end
+
+  describe 'when run with a custom loader' do
+    before do
+      @name = 'test.custom'
+      @seed_dir = setup_seed_dir(@name, 'states.txt', 'foo.err', 'bar.err')
+    end
+
+    after do
+      cleanup_seed_dir(@name)
+    end
+
+    it 'should load seed files' do
+      modify_seed_file(@name, 'states.txt') do |body|
+        body.sub('KY Kentucky', 'KV Kentucky').sub('VT Vermont', 'VT Vermount')
+      end
+      DataSeeder.run(seed_dir: @seed_dir, loaders: {'err' => AppErrorDataSeeder.new})
+      assert_equal 50, State.count
+      assert_equal 'Kentucky', State.find_by(code: 'KV').try(:name)
+      assert_equal 'Vermount', State.find_by(code: 'VT').try(:name)
+      assert_equal 2, App.count
+      assert App.find_by(name: 'foo')
+      bar = App.find_by(name: 'bar')
+      assert bar
+      assert 3, bar.app_errors.count
+      assert_equal 'Error message for B1', bar.app_errors.find_by(code: 'B1').try(:message)
+
+      modify_seed_file(@name, 'states.txt') do |body|
+        body.sub('KV Kentucky', 'KY Kentucky').sub('VT Vermount', 'VT Vermont')
+      end
+      modify_seed_file(@name, 'bar.err') do |body|
+        body.sub('B1 Error message for B1', 'C1 Error message for C1')
+      end
+      DataSeeder.run(seed_dir: @seed_dir, loaders: {'err' => AppErrorDataSeeder.new})
+      assert_equal 50, State.count
+      assert_equal 'Kentucky', State.find_by(code: 'KY').try(:name)
+      assert_equal 'Vermont', State.find_by(code: 'VT').try(:name)
+      assert_nil   State.find_by(code: 'KV')
+      assert_equal 2, App.count
+      assert App.find_by(name: 'foo')
+      bar = App.find_by(name: 'bar')
+      assert bar
+      assert 3, bar.app_errors.count
+      assert_nil bar.app_errors.find_by(code: 'B1')
+      assert_equal 'Error message for C1', bar.app_errors.find_by(code: 'C1').try(:message)
+
+      FileUtils.cp(Rails.root.join('db', 'seed.test', 'zulu.err'), @seed_dir)
+      DataSeeder.run(seed_dir: @seed_dir, loaders: {'err' => AppErrorDataSeeder.new})
+      assert_equal 50, State.count
+      assert_equal 3, App.count
+      zulu = App.find_by(name: 'zulu')
+      assert zulu
+      assert_equal 2, zulu.app_errors.count
+      assert zulu.app_errors.find_by(code: 'Z1')
+    end
+  end
+
 
   def setup_seed_dir(name, *files)
     dir_name = seed_dir_name(name)

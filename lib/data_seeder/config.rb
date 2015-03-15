@@ -26,6 +26,10 @@ module DataSeeder
       }
     end
 
+    def loaders=(loaders)
+      @loaders = default_loaders.merge(loaders)
+    end
+
     def add_loaders(loaders)
       @loaders = @loaders.merge(loaders)
     end

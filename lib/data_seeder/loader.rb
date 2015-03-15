@@ -1,6 +1,6 @@
 module DataSeeder
   module Loader
-    attr_accessor :klass, :file_config, :key_attribute
+    attr_accessor :file_config, :key_attribute
     attr_reader   :path, :path_minus_ext
 
     def initialize(options={})
@@ -22,11 +22,15 @@ module DataSeeder
       DataSeeder.logger
     end
 
+    def klass
+      # This should always translate to a class except for custom loaders
+      @path_minus_ext.classify.constantize rescue nil
+    end
+
     def process(path)
       @path           = path
       dot_index       = @path.rindex('.')
       @path_minus_ext = @path[0, dot_index]
-      @klass          = @path_minus_ext.classify.constantize
       @file_config    = {}
       File.open(@path, 'r') do |fin|
         load_file_config(fin)
@@ -39,14 +43,14 @@ module DataSeeder
 
     def setup
       @key_attribute = self.file_config[:key_attribute] || :id
-      @old_keys = @klass.all.pluck(@key_attribute).map(&:to_s) if @purge
-      logger.info { "Loading #{@klass.table_name}" }
+      @old_keys = self.klass.all.pluck(@key_attribute).map(&:to_s) if @purge
+      logger.info { "Loading #{@path}" }
       call_file_method(:setup)
     end
 
     def teardown
       @old_keys.each do |key|
-        if model = @klass.find_by(@key_attribute => key)
+        if model = self.klass.find_by(@key_attribute => key)
           logger.info { "  Destroying #{model_info(model)}"}
           model.destroy
         end
@@ -70,8 +74,8 @@ module DataSeeder
         @file_config = eval(match[1])
       else
         fin.seek(0)
-        if @klass.respond_to?(:data_seeder_config)
-          @file_config = @klass.data_seeder_config
+        if self.klass && self.klass.respond_to?(:data_seeder_config)
+          @file_config = self.klass.data_seeder_config
         end
       end
     end
@@ -84,7 +88,7 @@ module DataSeeder
       key = attr[@key_attribute.to_s] || attr[@key_attribute.to_sym]
       raise "No #{@key_attribute} in #{attr.inspect}" unless key
       @old_keys.delete(key.to_s)
-      model = @klass.find_or_initialize_by(@key_attribute => key)
+      model = self.klass.find_or_initialize_by(@key_attribute => key)
       model.attributes = attr
       save_model(model)
     end
@@ -105,7 +109,7 @@ module DataSeeder
         return method.call(*args)
       else
         class_method = "data_seeder_#{name}"
-        return @klass.send(class_method, *args) if @klass.respond_to?(class_method)
+        return self.klass.send(class_method, *args) if @klass.respond_to?(class_method)
       end
       return nil
     end

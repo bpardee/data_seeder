@@ -37,7 +37,7 @@ class AppErrorDataSeeder
       message   = line[space_i+1..-1].strip
       app_error = @existing_errors[code]
       if app_error
-        @existing_reason_codes.delete(code)
+        @existing_errors.delete(code)
         app_error.message = message
         unless app_error.changes.empty?
           logger.info { "  Changing #{code}: #{app_error.changes}" }
