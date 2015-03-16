@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["bradpardee@gmail.com"]
   s.homepage    = "http://github.com/bpardee/data_seeder"
   s.summary     = "Seed your Rails database"
-  s.description = "TODO: Description of DataSeeder."
+  s.description = "Provides a simple methodology for seeding your Rails database"
   s.license     = "Apache License V2.0"
 
   s.files = Dir["{app,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]

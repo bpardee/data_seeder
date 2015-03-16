@@ -82,16 +82,18 @@ data_seeder has default loaders for txt, csv, json and yml extensions but you ca
 your own custom loaders.
 For instance, suppose you had the following tables:
 
-    create_table "app_errors", force: :cascade do |t|
-      t.integer "app_id"
-      t.string  "code"
-      t.string  "message"
-    end
-    add_index "app_errors", ["app_id"], name: "index_app_errors_on_app_id"
+```ruby
+create_table "apps", force: :cascade do |t|
+  t.string "name"
+end
 
-    create_table "apps", force: :cascade do |t|
-      t.string "name"
-    end
+create_table "app_errors", force: :cascade do |t|
+  t.integer "app_id"
+  t.string  "code"
+  t.string  "message"
+end
+add_index "app_errors", ["app_id"], name: "index_app_errors_on_app_id"
+```
 
 And you wanted to load up separate error messages for each app such as the following 2 files:
 
