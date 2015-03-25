@@ -60,6 +60,29 @@ describe DataSeeder, :model do
     end
   end
 
+  describe 'when run with use_line_number_as_id' do
+    before do
+      @name     = "test.use_line_number_as_id"
+      @file     = "states.csv"
+      @seed_dir = setup_seed_dir(@name, @file)
+    end
+
+    after do
+      cleanup_seed_dir(@name)
+    end
+
+    it 'should use the line number as the id' do
+      modify_seed_file(@name, 'states.csv') do |body|
+        # Remove the id column
+        body.gsub(/^.*?,/,'')
+      end
+      File.open(seed_file_name(@name, 'states.cfg'), 'w') {|f| f.write '{ use_line_number_as_id: true }'}
+      DataSeeder.run(seed_dir: @seed_dir)
+      assert_equal 'AK', State.find(1).code
+      assert_equal 'WY', State.find(50).code
+    end
+  end
+
   describe 'when run with a custom loader' do
     before do
       @name = 'test.custom'
@@ -127,6 +150,8 @@ describe DataSeeder, :model do
 
   def cleanup_seed_dir(name)
     FileUtils.rm_rf(seed_dir_name(name))
+    # Reset config stuff
+    DataSeeder.reset
   end
 
   def modify_seed_file(name, file, &block)

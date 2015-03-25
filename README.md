@@ -225,6 +225,8 @@ seeding above.
 
 Allow config-driven initialization so that we could require: false in the Gemfile and only load as needed.
 
+Add depends_on option.
+
 Meta
 ----
 

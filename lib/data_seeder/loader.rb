@@ -1,3 +1,5 @@
+require 'english'
+
 module DataSeeder
   module Loader
     attr_accessor :file_config, :key_attribute
@@ -32,8 +34,11 @@ module DataSeeder
       dot_index       = @path.rindex('.')
       @path_minus_ext = @path[0, dot_index]
       @file_config    = {}
+      cfg_file = "#{@path_minus_ext}.cfg"
+      @file_config = eval(File.read(cfg_file)) if File.exist?(cfg_file)
       File.open(@path, 'r') do |fin|
-        load_file_config(fin)
+        load_file_config(fin) if @file_config.empty?
+        @file_config = ActiveSupport::HashWithIndifferentAccess.new(@file_config)
         setup
         load(fin)
         teardown
@@ -84,9 +89,17 @@ module DataSeeder
       throw 'Must override load'
     end
 
+    def line_number
+      $INPUT_LINE_NUMBER
+    end
+
     def save(attr)
-      key = attr[@key_attribute.to_s] || attr[@key_attribute.to_sym]
-      raise "No #{@key_attribute} in #{attr.inspect}" unless key
+      if @file_config[:use_line_number_as_id]
+        key = self.line_number
+      else
+        key = attr[@key_attribute.to_s] || attr[@key_attribute.to_sym]
+        raise "No #{@key_attribute} in #{attr.inspect}" unless key
+      end
       @old_keys.delete(key.to_s)
       model = self.klass.find_or_initialize_by(@key_attribute => key)
       model.attributes = attr

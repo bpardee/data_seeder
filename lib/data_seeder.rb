@@ -8,6 +8,8 @@ module DataSeeder
     attr_writer :config
   end
 
+  @@mutex = Mutex.new
+
   def self.config
     @config ||= Config.new
   end
@@ -25,17 +27,20 @@ module DataSeeder
   end
 
   def self.run(new_config={})
-    msec = Benchmark.ms do
-      new_config.each do |key, value|
-        self.config.send("#{key}=", value)
-      end
-      Dir.chdir(config.seed_dir) do
-        Dir['**/*'].each do |path|
-          SeedFile.load(path) if File.file?(path)
+    @@mutex.synchronize do
+      msec = Benchmark.ms do
+        new_config.each do |key, value|
+          self.config.send("#{key}=", value)
+        end
+        Dir.chdir(config.seed_dir) do
+          Dir['**/*'].each do |path|
+            next if path.end_with?('.cfg')
+            SeedFile.load(path) if File.file?(path)
+          end
         end
       end
+      logger.info { "DataSeeder.run took #{msec.to_i} msec" }
     end
-    logger.info { "DataSeeder.run took #{msec.to_i} msec" }
   end
 
   def self.test_run(new_config={})
