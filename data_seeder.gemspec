@@ -11,10 +11,8 @@ Gem::Specification.new do |s|
   s.summary     = "Seed your Rails database"
   s.description = "Provides a simple methodology for seeding your Rails database"
   s.license     = "Apache License V2.0"
-
-  s.files = Dir["{app,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
-  s.test_files = Dir["test/**/*"]
-
+  s.files       = Dir["{app,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+  s.test_files  = Dir["test/**/*"]
+  
   s.add_dependency "rails"
-  s.add_development_dependency "sqlite3"
 end
