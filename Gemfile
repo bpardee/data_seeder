@@ -19,7 +19,7 @@ gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby
 group :test, :development do
   gem 'pry'
   gem 'pry-doc'
-  #gem 'pry-plus'#, :git => 'git://github.com/avantcredit/pry-plus'
+  gem 'pry-plus', platform: :ruby, git: 'git://github.com/avantcredit/pry-plus'
   gem 'pry-rails'
 end
 

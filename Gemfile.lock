@@ -1,3 +1,16 @@
+GIT
+  remote: git://github.com/avantcredit/pry-plus
+  revision: f3844a8dd9862e9fd01d77d7bcbc7597cbb8f1c4
+  specs:
+    pry-plus (1.0.2)
+      bond
+      jist
+      pry-byebug
+      pry-doc
+      pry-docmore
+      pry-rescue
+      pry-stack_explorer
+
 PATH
   remote: .
   specs:
@@ -48,15 +61,25 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     arel (6.0.0)
+    binding_of_caller (0.7.2)
+      debug_inspector (>= 0.0.1)
+    bond (0.5.1)
     builder (3.2.2)
+    byebug (4.0.3)
+      columnize (= 0.9.0)
     coderay (1.1.0)
+    columnize (0.9.0)
+    debug_inspector (0.0.2)
     erubis (2.7.0)
     ffi (1.9.8-java)
     globalid (0.3.3)
       activesupport (>= 4.1.0)
     hike (1.2.3)
     i18n (0.7.0)
+    interception (0.5)
     jdbc-sqlite3 (3.8.7)
+    jist (1.5.1)
+      json
     json (1.8.2)
     json (1.8.2-java)
     loofah (2.0.1)
@@ -83,11 +106,23 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
       spoon (~> 0.0)
+    pry-byebug (3.1.0)
+      byebug (~> 4.0)
+      pry (~> 0.10)
     pry-doc (0.6.0)
       pry (~> 0.9)
       yard (~> 0.8)
+    pry-docmore (0.1.1)
+      pry
+      pry-doc
     pry-rails (0.3.3)
       pry (>= 0.9.10)
+    pry-rescue (1.4.1)
+      interception (>= 0.5)
+      pry
+    pry-stack_explorer (0.4.9.2)
+      binding_of_caller (>= 0.7)
+      pry (>= 0.9.11)
     rack (1.6.0)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -148,5 +183,6 @@ DEPENDENCIES
   minitest-rails
   pry
   pry-doc
+  pry-plus!
   pry-rails
   sqlite3
