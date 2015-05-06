@@ -100,6 +100,11 @@ module DataSeeder
         key = attr[@key_attribute.to_s] || attr[@key_attribute.to_sym]
         raise "No #{@key_attribute} in #{attr.inspect}" unless key
       end
+      if method = @file_config[:postprocess]
+        method.call(attr)
+      elsif self.klass.respond_to?(:data_seeder_postprocess)
+        self.klass.send(:data_seeder_postprocess, attr)
+      end
       @old_keys.delete(key.to_s)
       model = self.klass.find_or_initialize_by(@key_attribute => key)
       model.attributes = attr
