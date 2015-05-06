@@ -48,6 +48,20 @@ the key_attribute says that it will use the 'code' attribute to lookup existing 
 and the line function
 defines how the line is converted to an attribute hash defining the instance.
 
+Since the first line can get a little busy with config information, you can also store your config in a
+separate .cfg file with the same name.  This contents of this file should eval to a hash.  The above config line would be
+equivalent to a db/seed/countries.cfg file with the following:
+
+    {
+      key_attribute: :'code',
+      line: ->(attr) {
+        {
+          code: line[0,2],
+          name: line[3...-1]
+        }
+      }
+    }
+
 Running rake db:seed will result in the following output:
 
     # rake db:seed
@@ -196,9 +210,6 @@ YAML should allow loading as either array or hash. (currently only does hash)
 
 CSV should have options such as only: and except: for using/skipping the specified header columns.
 
-Allow multi-line config statement in seed file header?  Would somehow need to mark it as such via end-of-line mark or
-beginning-of-line mark or maybe use '#-' or '#%' for all command-type lines?
-
 The structure.sql caching within rails uses the file timestamp to determine whether to prepare the test database.  This
 is error prone and forces you to do a 'touch db/structure.sql' to get around the not getting reloaded problem.  Should
 I add a utility to override this rails implementation with a sha-based one like the seed files use?  (or am I the only
@@ -226,6 +237,8 @@ seeding above.
 Allow config-driven initialization so that we could require: false in the Gemfile and only load as needed.
 
 Add depends_on option.
+
+Document options (key_attribute, line, postprocess, etc)
 
 Meta
 ----
