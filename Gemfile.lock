@@ -14,7 +14,7 @@ GIT
 PATH
   remote: .
   specs:
-    data_seeder (0.0.4)
+    data_seeder (0.0.5)
       rails
 
 GEM
@@ -186,3 +186,6 @@ DEPENDENCIES
   pry-plus!
   pry-rails
   sqlite3
+
+BUNDLED WITH
+   1.10.6

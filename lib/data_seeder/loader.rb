@@ -24,6 +24,12 @@ module DataSeeder
       DataSeeder.logger
     end
 
+    def klass!
+      @path_minus_ext.classify.constantize
+    rescue NameError => e
+      raise "#{@path} doesn't match a corresponding model"
+    end
+
     def klass
       # This should always translate to a class except for custom loaders
       @path_minus_ext.classify.constantize rescue nil
@@ -48,14 +54,14 @@ module DataSeeder
 
     def setup
       @key_attribute = self.file_config[:key_attribute] || :id
-      @old_keys = self.klass.all.pluck(@key_attribute).map(&:to_s) if @purge
+      @old_keys = self.klass!.all.pluck(@key_attribute).map(&:to_s) if @purge
       logger.info { "Loading #{@path}" }
       call_file_method(:setup)
     end
 
     def teardown
       @old_keys.each do |key|
-        if model = self.klass.find_by(@key_attribute => key)
+        if model = self.klass!.find_by(@key_attribute => key)
           logger.info { "  Destroying #{model_info(model)}"}
           model.destroy
         end
@@ -102,11 +108,11 @@ module DataSeeder
       end
       if method = @file_config[:postprocess]
         method.call(attr)
-      elsif self.klass.respond_to?(:data_seeder_postprocess)
-        self.klass.send(:data_seeder_postprocess, attr)
+      elsif self.klass!.respond_to?(:data_seeder_postprocess)
+        self.klass!.send(:data_seeder_postprocess, attr)
       end
       @old_keys.delete(key.to_s)
-      model = self.klass.find_or_initialize_by(@key_attribute => key)
+      model = self.klass!.find_or_initialize_by(@key_attribute => key)
       model.attributes = attr
       save_model(model)
     end

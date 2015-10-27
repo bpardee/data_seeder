@@ -5,13 +5,12 @@ module DataSeeder
     class CSV
       include Loader
 
-      def line_number
-        # Don't count the header
-        $INPUT_LINE_NUMBER-1
-      end
+      attr_reader :line_number
 
       def load(io)
+        @line_number = 0
         ::CSV.foreach(io, headers: true) do |row|
+          @line_number += 1
           save(row.to_hash)
         end
       end
