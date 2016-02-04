@@ -32,11 +32,36 @@ module DataSeeder
         new_config.each do |key, value|
           self.config.send("#{key}=", value)
         end
-        Dir.chdir(config.seed_dir) do
-          Dir['**/*'].each do |path|
-            next if path.end_with?('.cfg')
-            SeedFile.load(path) if File.file?(path)
+        # Keep track of the seed files that have dependencies that aren't fulfilled
+        pending = []
+        config.seed_dirs.each do |seed_dir|
+          Dir.chdir(seed_dir) do
+            Dir['**/*'].each do |path|
+              next if path.end_with?('.cfg')
+              if File.file?(path)
+                unless SeedFile.load(path)
+                  pending << [seed_dir, path]
+                end
+              end
+            end
           end
+        end
+        # Loop thru the ones that couldn't be processed previously because they depended on another seed being loaded first
+        until pending.empty?
+          new_pending = []
+          pending.each do |seed_dir, path|
+            Dir.chdir(seed_dir) do
+              unless SeedFile.load(path)
+                new_pending << [seed_dir, path]
+              end
+            end
+          end
+          if pending.size == new_pending.size
+            msg = "Error: Circular dependency in DataSeeder, seeds=#{pending.inspect}"
+            logger.error msg
+            raise msg
+          end
+          pending = new_pending
         end
       end
       logger.info { "DataSeeder.run took #{msec.to_i} msec" }

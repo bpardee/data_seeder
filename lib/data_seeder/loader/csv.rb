@@ -9,7 +9,8 @@ module DataSeeder
 
       def load(io)
         @line_number = 0
-        ::CSV.foreach(io, headers: true) do |row|
+        csv = ::CSV.new(io, headers: true)
+        csv.each do |row|
           @line_number += 1
           save(row.to_hash)
         end

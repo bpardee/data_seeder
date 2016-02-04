@@ -11,7 +11,7 @@ data_seeder Changelog
 
 0.0.4 / 2015-05-06
 
-  - Add postprocess file_config for manipulating attributes before save
+  - Add postprocess option for manipulating attributes before save
 
 0.0.3 / 2015-03-26
 
@@ -23,7 +23,7 @@ data_seeder Changelog
 
   - Added option use_line_number_as_id
 
-  - Allow config options to be setup in .cfg file since .csv doesn't work with config as first line.
+  - Allow config to be setup in .cfg file since .csv doesn't work with config as first line.
 
 
 0.0.1 / 2015-03-15

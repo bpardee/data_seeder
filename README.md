@@ -53,8 +53,8 @@ separate .cfg file with the same name.  This contents of this file should eval t
 equivalent to a db/seed/countries.cfg file with the following:
 
     {
-      key_attribute: :'code',
-      line: ->(attr) {
+      key_attribute: 'code',
+      line: ->(line) {
         {
           code: line[0,2],
           name: line[3...-1]
@@ -97,11 +97,11 @@ your own custom loaders.
 For instance, suppose you had the following tables:
 
 ```ruby
-create_table "apps", force: :cascade do |t|
+create_table "apps" do |t|
   t.string "name"
 end
 
-create_table "app_errors", force: :cascade do |t|
+create_table "app_errors" do |t|
   t.integer "app_id"
   t.string  "code"
   t.string  "message"
@@ -208,7 +208,7 @@ x Gigabyte seed file that you don't want to check into source control and only w
 
 YAML should allow loading as either array or hash. (currently only does hash)
 
-CSV should have options such as only: and except: for using/skipping the specified header columns.
+CSV should have config such as only: and except: for using/skipping the specified header columns.
 
 The structure.sql caching within rails uses the file timestamp to determine whether to prepare the test database.  This
 is error prone and forces you to do a 'touch db/structure.sql' to get around the not getting reloaded problem.  Should
@@ -220,19 +220,13 @@ Add 'sql' loader (with disclaimer that it will temporarily truncate the table)
 Ability to stop early when loading up a large seed file for a given environment, i.e., stop after processing the
 first 10 lines when Rails.env.test?
 
-I want to allow different seeding for different environments.  For instance development might have a bunch of dummy
-data useful for getting an environment up and running.  I'm thinking either the seed_dir similar to like a PATH
-environment variable where the first one found would override the others, or maybe make it automatic based on the
-directory names and the environment (seed.development/state.yml would override seed/state.yml).
-
 The test environment will be the one that will constantly being seeded after migrations or branch changes.  Some of
 the seed files might be large and take a long time to seed.  The above
 strategy using seed.test might be useful but it might also be useful to have a preprocessor type such as .sh so for
 instance you might have seed.test/table_with_lotsa_rows.csv.sh which might consist of the line
 'head -20 ../seed/table_with_lotsa_rows.csv'
 
-Caching of long-running stuff via pg_dump, mysqldump, or other?  This belongs with discussion of the environment-specific
-seeding above.
+Caching of long-running stuff via pg_dump, mysqldump, or other?  
 
 Allow config-driven initialization so that we could require: false in the Gemfile and only load as needed.
 

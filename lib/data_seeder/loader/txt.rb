@@ -4,7 +4,7 @@ module DataSeeder
       include Loader
 
       def load(io)
-        if method = self.file_config[:line]
+        if method = config[:line]
           io.each_line do |line|
             next if line.blank? || line.match(/^\s*#/)
             save(method.call(line))
