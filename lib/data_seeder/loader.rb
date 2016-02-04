@@ -2,8 +2,15 @@ require 'English'
 
 module DataSeeder
   module Loader
-    attr_accessor :key_attribute
-    attr_reader   :klass, :path, :path_minus_ext, :config
+    attr_reader :config, :key_attribute, :klass, :path, :path_minus_ext
+
+    def initialize(config)
+      @config         = config
+      @key_attribute  = config[:key_attribute] || :id
+      @klass          = config[:klass]
+      @path           = config[:path]
+      @path_minus_ext = config[:path_minus_ext]
+    end
 
     def logger
       DataSeeder.logger
@@ -13,55 +20,23 @@ module DataSeeder
       { purge: true }
     end
 
-    # Returns nil if the path was not ready for processing due to dependencies
-    def process(path)
-      @path           = path
-      dot_index       = @path.rindex('.')
-      @path_minus_ext = @path[0, dot_index]
-      cfg_file = "#{@path_minus_ext}.cfg"
-      begin
-        @klass = @path_minus_ext.classify.constantize
-      rescue NameError => e
-        @klass = nil
-      end
-      @config = default_config
-      if @klass && @klass.respond_to?(:data_seeder_config)
-        @config = @config.merge(@klass.data_seeder_config)
-      end
-      if File.exist?(cfg_file)
-        @config = @config.merge(eval(File.read(cfg_file)))
-      end
-      File.open(@path, 'r') do |io|
-        # TODO: Lets get rid of this load_file_config stuff.  It's too hacky and may cause problems for
-        # non-file IO types.
-        load_file_config(io)
-        depends = call_method(:depends)
-        return nil if depends && !SeedFile.processed?(depends)
-        process_io(io)
-      end
-      call_method(:teardown)
-      return true
-    end
-
-    def process_io(io, config={})
-      @config = (@config || default_config).merge(config)
-      @key_attribute = @config[:key_attribute] || :id
+    def process(io)
       setup
       load(io)
       teardown
     end
 
     def setup
-      if @config[:purge]
+      if config[:purge]
         @old_ids = klass.all.pluck(:id).to_set
       else
         @old_ids = Set.new
       end
-      logger.info { "Loading #{@path}" }
       call_method(:setup)
     end
 
     def teardown
+      call_method(:teardown)
       @old_ids.each do |id|
         if model = klass.find_by(id: id)
           destroy_model(model)
@@ -73,19 +48,10 @@ module DataSeeder
     # The changes argument will be the model.changes on an update.
     def model_info(model, changes=nil)
       if changes
-        attr = @config[:update_display_method] || @key_attribute
+        attr = config[:update_display_method] || @key_attribute
         "#{model.send(attr)}: #{changes.inspect}"
       else
         model.inspect
-      end
-    end
-
-    def load_file_config(io)
-      config_line = io.readline
-      if match = config_line.match(/^\s*#\s*config:(.*)/)
-        @config = @config.merge(eval(match[1]))
-      else
-        io.seek(0)
       end
     end
 
@@ -93,19 +59,19 @@ module DataSeeder
       throw 'Must override load'
     end
 
+    # This doesn't work in some versions of JRuby (version 9.0.3.0?)
     def line_number
       $INPUT_LINE_NUMBER
     end
 
     def save(attr)
-      attr = call_method(:preprocess, attr) || attr
-      if @config[:use_line_number_as_id]
+      attr = call_method(:postprocess, attr) || attr
+      if config[:use_line_number_as_id]
         key = self.line_number
       else
         key = attr[@key_attribute.to_s] || attr[@key_attribute.to_sym]
         raise "No #{@key_attribute} in #{attr.inspect}" unless key
       end
-      call_method(:postprocess)
       model = self.klass.find_or_initialize_by(@key_attribute => key)
       model.attributes = attr
       save_model(model)
@@ -143,7 +109,7 @@ module DataSeeder
     def call_method(name, *args)
       if ![:setup,:teardown].include?(name) && self.respond_to?(name)
         return send(name, @args)
-      elsif val = @config[name]
+      elsif val = config[name]
         if val.kind_of?(Proc)
           return val.call(*args)
         else

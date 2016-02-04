@@ -38,19 +38,11 @@ the following table:
 
 And you have a corresponding db/seed/countries.txt file as follows:
 
-    # config: { key_attribute: 'code', line: ->(line) { { code: line[0,2], name: line[3...-1] } } }
     AD Andorra
     AE United Arab Emirates
     AF Arghanistan
 
-The first line in a file can define the config attributes associated with the file.  For this seed file,
-the key_attribute says that it will use the 'code' attribute to lookup existing records (defaults to 'id')
-and the line function
-defines how the line is converted to an attribute hash defining the instance.
-
-Since the first line can get a little busy with config information, you can also store your config in a
-separate .cfg file with the same name.  This contents of this file should eval to a hash.  The above config line would be
-equivalent to a db/seed/countries.cfg file with the following:
+And a db/seed/countries.cfg file as follows:
 
     {
       key_attribute: 'code',
@@ -61,6 +53,16 @@ equivalent to a db/seed/countries.cfg file with the following:
         }
       }
     }
+
+The first line in a file can define the config attributes associated with the file.  For this seed file,
+the key_attribute says that it will use the 'code' attribute to lookup existing records (defaults to 'id')
+and the line function
+defines how the line is converted to an attribute hash defining the instance.
+
+Since the first line can get a little busy with config information, you can also store your config in a
+separate .cfg file with the same name.  This contents of this file should eval to a hash.  The above config line would be
+equivalent to a db/seed/countries.cfg file with the following:
+
 
 Running rake db:seed will result in the following output:
 
