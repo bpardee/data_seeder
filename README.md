@@ -186,7 +186,7 @@ To add the seeder, you would create the following config/initializers/data_seede
 ```ruby
 MyApp::Application.config.after_initialize do
   DataSeeder.configure do |config|
-    config.add_loader('err', AppErrorDataSeeder.new)
+    config.add_loader('err', AppErrorDataSeeder)
   end
 end
 ```
