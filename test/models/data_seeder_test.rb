@@ -3,8 +3,8 @@ require 'test_helper'
 describe DataSeeder, :model do
   describe 'when run with txt files' do
     before do
-      @name = 'test.txt'
-      @seed_dir = setup_seed_dir(@name, 'countries.txt', 'states.txt')
+      @name      = 'test.txt'
+      @seed_dirs = setup_seed_dirs(@name, 'countries_txt', 'states_txt')
     end
 
     after do
@@ -12,18 +12,18 @@ describe DataSeeder, :model do
     end
 
     it 'should load seed files' do
-      modify_seed_file(@name, 'states.txt') do |body|
+      modify_seed_file(@name, 'states_txt/states.txt') do |body|
         body.sub('KY Kentucky', 'KV Kentucky').sub('VT Vermont', 'VT Vermount')
       end
-      DataSeeder.run(seed_dir: @seed_dir)
+      DataSeeder.run(seed_dirs: @seed_dirs)
       assert_equal 50, State.count
       assert_equal 'United States', Country.find_by(code: 'US').try(:name)
       assert_equal 'Kentucky', State.find_by(code: 'KV').try(:name)
       assert_equal 'Vermount', State.find_by(code: 'VT').try(:name)
-      modify_seed_file(@name, 'states.txt') do |body|
+      modify_seed_file(@name, 'states_txt/states.txt') do |body|
         body.sub('KV Kentucky', 'KY Kentucky').sub('VT Vermount', 'VT Vermont')
       end
-      DataSeeder.run(seed_dir: @seed_dir)
+      DataSeeder.run
       assert_equal 50, State.count
       assert_equal 'Kentucky', State.find_by(code: 'KY').try(:name)
       assert_equal 'Vermont', State.find_by(code: 'VT').try(:name)
@@ -34,9 +34,10 @@ describe DataSeeder, :model do
   %w(csv json yml).each do |loader_type|
     describe "when run with #{loader_type} files" do
       before do
-        @name     = "test.#{loader_type}"
-        @file     = "states.#{loader_type}"
-        @seed_dir = setup_seed_dir(@name, @file)
+        @name      = "test.#{loader_type}"
+        @dir       = "states_#{loader_type}"
+        @file      = "#{@dir}/states.#{loader_type}"
+        @seed_dirs = setup_seed_dirs(@name, @dir)
       end
 
       after do
@@ -47,13 +48,13 @@ describe DataSeeder, :model do
         modify_seed_file(@name, @file) do |body|
           body.sub('Alaska', 'Alaskaska')
         end
-        DataSeeder.run(seed_dir: @seed_dir)
+        DataSeeder.run(seed_dirs: @seed_dirs)
         assert_equal 50, State.count
         assert_equal 'Alaskaska', State.find_by(code: 'AK').try(:name)
         modify_seed_file(@name, @file) do |body|
           body.sub('Alaskaska', 'Alaska')
         end
-        DataSeeder.run(seed_dir: @seed_dir)
+        DataSeeder.run(seed_dirs: @seed_dirs)
         assert_equal 50, State.count
         assert_equal 'Alaska', State.find_by(code: 'AK').try(:name)
       end
@@ -62,9 +63,9 @@ describe DataSeeder, :model do
 
   describe 'when run with use_line_number_as_id' do
     before do
-      @name     = "test.use_line_number_as_id"
-      @file     = "states.csv"
-      @seed_dir = setup_seed_dir(@name, @file)
+      @name      = "test.use_line_number_as_id"
+      @dir       = "states_csv"
+      @seed_dirs = setup_seed_dirs(@name, @dir)
     end
 
     after do
@@ -72,12 +73,12 @@ describe DataSeeder, :model do
     end
 
     it 'should use the line number as the id' do
-      modify_seed_file(@name, 'states.csv') do |body|
+      modify_seed_file(@name, 'states_csv/states.csv') do |body|
         # Remove the id column
         body.gsub(/^.*?,/,'')
       end
-      File.open(seed_file_name(@name, 'states.cfg'), 'w') {|f| f.write '{ use_line_number_as_id: true }'}
-      DataSeeder.run(seed_dir: @seed_dir)
+      File.open(seed_file_name(@name, 'states_csv/states.cfg'), 'w') {|f| f.write '{ use_line_number_as_id: true }'}
+      DataSeeder.run(seed_dirs: @seed_dirs)
       assert_equal 'AK', State.find(1).code
       assert_equal 'WY', State.find(50).code
     end
@@ -85,8 +86,8 @@ describe DataSeeder, :model do
 
   describe 'when run with a custom loader' do
     before do
-      @name = 'test.custom'
-      @seed_dir = setup_seed_dir(@name, 'states.txt', 'foo.err', 'bar.err')
+      @name      = 'test.custom'
+      @seed_dirs = setup_seed_dirs(@name, 'states_txt', 'foo_err', 'bar_err')
     end
 
     after do
@@ -94,10 +95,10 @@ describe DataSeeder, :model do
     end
 
     it 'should load seed files' do
-      modify_seed_file(@name, 'states.txt') do |body|
+      modify_seed_file(@name, 'states_txt/states.txt') do |body|
         body.sub('KY Kentucky', 'KV Kentucky').sub('VT Vermont', 'VT Vermount')
       end
-      DataSeeder.run(seed_dir: @seed_dir, loaders: {'err' => AppErrorDataSeeder.new})
+      DataSeeder.run(seed_dirs: @seed_dirs, loaders: {'err' => AppErrorDataSeeder})
       assert_equal 50, State.count
       assert_equal 'Kentucky', State.find_by(code: 'KV').try(:name)
       assert_equal 'Vermount', State.find_by(code: 'VT').try(:name)
@@ -108,13 +109,13 @@ describe DataSeeder, :model do
       assert 3, bar.app_errors.count
       assert_equal 'Error message for B1', bar.app_errors.find_by(code: 'B1').try(:message)
 
-      modify_seed_file(@name, 'states.txt') do |body|
+      modify_seed_file(@name, 'states_txt/states.txt') do |body|
         body.sub('KV Kentucky', 'KY Kentucky').sub('VT Vermount', 'VT Vermont')
       end
-      modify_seed_file(@name, 'bar.err') do |body|
+      modify_seed_file(@name, 'bar_err/bar.err') do |body|
         body.sub('B1 Error message for B1', 'C1 Error message for C1')
       end
-      DataSeeder.run(seed_dir: @seed_dir, loaders: {'err' => AppErrorDataSeeder.new})
+      DataSeeder.run(seed_dirs: @seed_dirs, loaders: {'err' => AppErrorDataSeeder})
       assert_equal 50, State.count
       assert_equal 'Kentucky', State.find_by(code: 'KY').try(:name)
       assert_equal 'Vermont', State.find_by(code: 'VT').try(:name)
@@ -127,8 +128,9 @@ describe DataSeeder, :model do
       assert_nil bar.app_errors.find_by(code: 'B1')
       assert_equal 'Error message for C1', bar.app_errors.find_by(code: 'C1').try(:message)
 
-      FileUtils.cp(Rails.root.join('db', 'seed.test', 'zulu.err'), @seed_dir)
-      DataSeeder.run(seed_dir: @seed_dir, loaders: {'err' => AppErrorDataSeeder.new})
+      FileUtils.cp_r(Rails.root.join('db', 'seed.test', 'zulu_err'), seed_dir_name(@name))
+      DataSeeder.config.add_seed_dir(seed_file_name(@name, 'zulu_err'))
+      DataSeeder.run
       assert_equal 50, State.count
       assert_equal 3, App.count
       zulu = App.find_by(name: 'zulu')
@@ -139,13 +141,13 @@ describe DataSeeder, :model do
   end
 
 
-  def setup_seed_dir(name, *files)
+  def setup_seed_dirs(name, *dirs)
     dir_name = seed_dir_name(name)
     FileUtils.mkdir_p(dir_name)
-    files.each do |file|
-      FileUtils.cp(Rails.root.join('db', 'seed.test', file), dir_name)
+    return dirs.map do |dir|
+      FileUtils.cp_r(Rails.root.join('db', 'seed.test', dir), dir_name)
+      "#{dir_name}/#{dir}"
     end
-    return dir_name
   end
 
   def cleanup_seed_dir(name)

@@ -14,7 +14,7 @@ GIT
 PATH
   remote: .
   specs:
-    data_seeder (0.1.0)
+    data_seeder (0.1.0.beta1)
       rails
 
 GEM

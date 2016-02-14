@@ -50,6 +50,9 @@ module DataSeeder
           DataSeeder.logger.warn { "Warning: No loader for #{path}"}
           return true
         end
+        if loader_klass.respond_to?(:default_config)
+          config = loader_klass.default_config.merge(config)
+        end
         config[:path]           = path
         config[:path_minus_ext] = path_minus_ext
         loader                  = loader_klass.new(config)
