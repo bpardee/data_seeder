@@ -147,8 +147,6 @@ Executing DataSeeder.run would result in the following:
 TODO
 ----
 
-YAML should allow loading as either array or hash. (currently only does hash)
-
 Add 'sql' loader (with disclaimer that it will temporarily truncate the table)
 
 Caching of long-running stuff via pg_dump, mysqldump, or other?  
@@ -173,7 +171,7 @@ Author
 License
 -------
 
-Copyright 2015 Brad Pardee
+Copyright 2015-2016 Brad Pardee
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
