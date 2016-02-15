@@ -47,7 +47,7 @@ module DataSeeder
         return true unless ext
         loader_klass = config[:loader] || DataSeeder.config.loaders[ext]
         unless loader_klass
-          DataSeeder.logger.warn { "Warning: No loader for #{path}"}
+          DataSeeder.config.logger.warn "Warning: No loader for #{path}"
           return true
         end
         if loader_klass.respond_to?(:default_config)
@@ -58,12 +58,14 @@ module DataSeeder
         loader                  = loader_klass.new(config)
         depends                 = loader.config[:depends]
         return false if depends && !self.class.processed?(depends)
-        DataSeeder.logger.info "Loading #{path}"
-        File.open(path, 'r') do |io|
-          loader.process(io)
+        DataSeeder.config.logger.debug { "Loading #{path}" }
+        DataSeeder.config.log_indent do
+          File.open(path, 'r') do |io|
+            loader.process(io)
+          end
+          self.sha256 = new_sha256
+          save!
         end
-        self.sha256 = new_sha256
-        save!
       end
       self.class.add_processed(path_minus_ext)
       return true

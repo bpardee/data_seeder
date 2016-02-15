@@ -2,9 +2,10 @@ require 'English'
 
 module DataSeeder
   module Loader
-    attr_reader :config, :key_attribute, :klass, :path, :path_minus_ext
+    attr_reader :seeder_config, :config, :key_attribute, :klass, :path, :path_minus_ext
 
     def initialize(config)
+      @seeder_config  = DataSeeder.config
       @config         = config
       @key_attribute  = config[:key_attribute] || :id
       @klass          = config[:klass]
@@ -16,7 +17,7 @@ module DataSeeder
     end
 
     def logger
-      DataSeeder.logger
+      @seeder_config.logger
     end
 
     def process(io)
@@ -106,15 +107,19 @@ module DataSeeder
     end
 
     def log_save(model)
-      logger.info { "  Saving #{model_info(model)}" }
+      logger.debug { "Saving #{model_info(model)}" }
     end
 
     def log_update(model)
-      logger.info { "  Updating #{model_info(model, model.changes)}" }
+      logger.debug { "Updating #{model_info(model, model.changes)}" }
     end
 
     def log_destroy(model)
-      logger.info { "  Destroying #{model_info(model)}"}
+      logger.debug { "Destroying #{model_info(model)}" }
+    end
+
+    def log_indent(&block)
+      @seeder_config.log_indent(&block)
     end
 
     def call_method(name, *args)

@@ -1,20 +1,16 @@
 module DataSeeder
   class Config
-    attr_accessor :seed_dirs, :logger, :loaders
+    attr_accessor :seed_dirs, :logger, :loaders, :verbose
 
     def initialize
-      @seed_dirs  = ['db/seed'].freeze
-      @logger     = Logger.new
-      @loaders    = default_loaders
-      @is_default = true
-    end
-
-    def verbose=(verbose)
-      @logger.verbose = verbose
-    end
-
-    def verbose
-      @logger.verbose
+      @seed_dirs        = ['db/seed'].freeze
+      @loaders          = default_loaders
+      @verbose          = true
+      @is_default       = true
+      @logger           = Logger.new($stdout)
+      @logger.formatter = ->(severity, datetime, progname, msg) { "#{@indent}#{msg}\n" }
+      @indent_level     = 0
+      @indent           = ''
     end
 
     def default_loaders
@@ -53,6 +49,15 @@ module DataSeeder
       else
         @seed_dirs << seed_dir
       end
+    end
+
+    def log_indent(&block)
+      @indent_level += 1
+      @indent = '  ' * @indent_level
+      yield
+    ensure
+      @indent_level -= 1
+      @indent = '  ' * @indent_level
     end
   end
 end

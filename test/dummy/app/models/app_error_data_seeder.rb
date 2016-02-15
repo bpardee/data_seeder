@@ -7,10 +7,10 @@ class AppErrorDataSeeder
     @app = App.find_or_initialize_by(name: self.path_minus_ext)
     @existing_errors = {}
     if @app.new_record?
-      logger.info "Loading errors for new App: #{@app.name}"
+      logger.debug { "Loading errors for new App: #{@app.name}" }
       @app.save!
     else
-      logger.info "Loading errors for existing App: #{@app.name}"
+      logger.debug { "Loading errors for existing App: #{@app.name}" }
       @app.app_errors.each do |app_error|
         @existing_errors[app_error.code] = app_error
       end
@@ -19,10 +19,12 @@ class AppErrorDataSeeder
 
   def teardown
     unless @existing_errors.empty?
-      logger.info { "  The following are begin removed:" }
-      @existing_errors.each do |code, app_error|
-        logger.info "    #{code}: #{app_error.message}"
-        app_error.destroy
+      logger.debug { "The following are begin removed:" }
+      log_indent do
+        @existing_errors.each do |code, app_error|
+          logger.debug { "#{code}: #{app_error.message}" }
+          app_error.destroy
+        end
       end
     end
   end
@@ -40,11 +42,11 @@ class AppErrorDataSeeder
         @existing_errors.delete(code)
         app_error.message = message
         unless app_error.changes.empty?
-          logger.info { "  Changing #{code}: #{app_error.changes}" }
+          logger.debug { "Changing #{code}: #{app_error.changes}" }
           app_error.save!
         end
       else
-        logger.info { "  Creating #{code}: #{message}" }
+        logger.debug { "Creating #{code}: #{message}" }
         @app.app_errors.create!(code: code, message: message)
       end
     end

@@ -1,7 +1,6 @@
 require 'data_seeder/config'
 require 'data_seeder/engine'
 require 'data_seeder/loader'
-require 'data_seeder/logger'
 
 module DataSeeder
   class << self
@@ -20,10 +19,6 @@ module DataSeeder
 
   def self.configure
     yield(config)
-  end
-
-  def self.logger
-    config.logger
   end
 
   def self.run(new_config={})
@@ -58,13 +53,13 @@ module DataSeeder
           end
           if pending.size == new_pending.size
             msg = "Error: Circular dependency in DataSeeder, seeds=#{pending.inspect}"
-            logger.error msg
+            config.logger.error msg
             raise msg
           end
           pending = new_pending
         end
       end
-      logger.info { "DataSeeder.run took #{msec.to_i} msec" }
+      config.logger.info "DataSeeder.run took #{msec.to_i} msec"
     end
   end
 
