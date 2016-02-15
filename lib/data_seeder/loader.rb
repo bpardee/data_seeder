@@ -131,11 +131,6 @@ module DataSeeder
         else
           return val
         end
-      else
-        if @klass
-          class_method = "data_seeder_#{name}"
-          return @klass.send(class_method, *args) if @klass.respond_to?(class_method)
-        end
       end
       return nil
     end

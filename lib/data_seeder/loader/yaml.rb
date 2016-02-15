@@ -6,7 +6,7 @@ module DataSeeder
       include Loader
 
       def load(io)
-        yaml = ::YAML.load(io.read)
+        yaml = ::YAML.load(ERB.new(io.read).result)
         if yaml.kind_of?(Hash)
           yaml.each do |key, attr|
             attr[self.key_attribute] = key if self.key_attribute

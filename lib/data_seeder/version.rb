@@ -1,3 +1,3 @@
 module DataSeeder
-  VERSION = "0.1.0.beta1"
+  VERSION = "1.0.0"
 end

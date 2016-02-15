@@ -9,11 +9,6 @@ module DataSeeder
             next if line.blank? || line.match(/^\s*#/)
             save(method.call(line))
           end
-        elsif self.klass.respond_to?(:data_seeder_line)
-          io.each_line do |line|
-            next if line.blank? || line.match(/^\s*#/)
-            save(self.klass.send(:data_seeder_line, line))
-          end
         else
           raise "No line method defined for #{self.klass.name}"
         end

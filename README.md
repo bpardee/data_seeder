@@ -54,14 +54,11 @@ And a db/seed/countries.cfg file as follows:
       }
     }
 
-The first line in a file can define the config attributes associated with the file.  For this seed file,
+The cfg file defines the config attributes associated with the file.  This contents of this file
+should eval to a hash.  For this seed file,
 the key_attribute says that it will use the 'code' attribute to lookup existing records (defaults to 'id')
 and the line function
-defines how the line is converted to an attribute hash defining the instance.
-
-Since the first line can get a little busy with config information, you can also store your config in a
-separate .cfg file with the same name.  This contents of this file should eval to a hash.  The above config line would be
-equivalent to a db/seed/countries.cfg file with the following:
+defines how the line is converted to an attribute hash defining the instance.  
 
 
 Running rake db:seed will result in the following output:
@@ -124,64 +121,9 @@ And you wanted to load up separate error messages for each app such as the follo
     B1 Error message for B1
 
 
-You could create your own custom loader that might look as follows:
+Look [here](test/dummy/app/models/app_error_data_seeder.rb) for an example of creating your own custom loader.
 
-```ruby
-require 'data_seeder'
-
-class AppErrorDataSeeder
-  include ::DataSeeder::Loader
-
-  def setup
-    @app = App.find_or_initialize_by(name: self.path_minus_ext)
-    @existing_errors = {}
-    if @app.new_record?
-      logger.info "Loading errors for new App: #{@app.name}"
-      @app.save!
-    else
-      logger.info "Loading errors for existing App: #{@app.name}"
-      @app.app_errors.each do |app_error|
-        @existing_errors[app_error.code] = app_error
-      end
-    end
-  end
-
-  def teardown
-    unless @existing_errors.empty?
-      logger.info { "  The following are begin removed:" }
-      @existing_errors.each do |code, app_error|
-        logger.info "    #{code}: #{app_error.message}"
-        app_error.destroy
-      end
-    end
-  end
-
-  def load(io)
-    io.each_line do |line|
-      line.strip!
-      next if line.blank? || line[0] == ?#
-      space_i   = line.index(' ')
-      raise "Invalid line: #{line}" unless space_i
-      code      = line[0,space_i].strip
-      message   = line[space_i+1..-1].strip
-      app_error = @existing_errors[code]
-      if app_error
-        @existing_errors.delete(code)
-        app_error.message = message
-        unless app_error.changes.empty?
-          logger.info { "  Changing #{code}: #{app_error.changes}" }
-          app_error.save!
-        end
-      else
-        logger.info { "  Creating #{code}: #{message}" }
-        @app.app_errors.create!(code: code, message: message)
-      end
-    end
-  end
-end
-```  
-
-To add the seeder, you would create the following config/initializers/data_seeder.rb:
+To add this seeder, you would create the following config/initializers/data_seeder.rb:
 
 ```ruby
 MyApp::Application.config.after_initialize do
@@ -205,34 +147,11 @@ Executing DataSeeder.run would result in the following:
 TODO
 ----
 
-Ability to specify more than 1 directory for Rails.env overrides.  Could potentially be used if you have that
-x Gigabyte seed file that you don't want to check into source control and only want run on production?
-
 YAML should allow loading as either array or hash. (currently only does hash)
-
-CSV should have config such as only: and except: for using/skipping the specified header columns.
-
-The structure.sql caching within rails uses the file timestamp to determine whether to prepare the test database.  This
-is error prone and forces you to do a 'touch db/structure.sql' to get around the not getting reloaded problem.  Should
-I add a utility to override this rails implementation with a sha-based one like the seed files use?  (or am I the only
-one who has to 'touch db/structure.sql' everytime I switch branches?)
 
 Add 'sql' loader (with disclaimer that it will temporarily truncate the table)
 
-Ability to stop early when loading up a large seed file for a given environment, i.e., stop after processing the
-first 10 lines when Rails.env.test?
-
-The test environment will be the one that will constantly being seeded after migrations or branch changes.  Some of
-the seed files might be large and take a long time to seed.  The above
-strategy using seed.test might be useful but it might also be useful to have a preprocessor type such as .sh so for
-instance you might have seed.test/table_with_lotsa_rows.csv.sh which might consist of the line
-'head -20 ../seed/table_with_lotsa_rows.csv'
-
 Caching of long-running stuff via pg_dump, mysqldump, or other?  
-
-Allow config-driven initialization so that we could require: false in the Gemfile and only load as needed.
-
-Add depends_on option.
 
 Document options (key_attribute, line, postprocess, etc)
 
