@@ -28,11 +28,9 @@ module DataSeeder
 
     def setup
       @old_ids = klass.all.pluck(:id).to_set if config[:purge]
-      call_method(:setup)
     end
 
     def teardown
-      call_method(:teardown)
       destroy_models(klass, @old_ids)
     end
 
@@ -123,7 +121,7 @@ module DataSeeder
     end
 
     def call_method(name, *args)
-      if ![:setup,:teardown].include?(name) && self.respond_to?(name)
+      if self.respond_to?(name)
         return send(name, *args)
       elsif val = config[name]
         if val.kind_of?(Proc)
