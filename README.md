@@ -146,6 +146,14 @@ Executing DataSeeder.run would result in the following:
 
 ## Configurable values
 
+#### depends
+
+Value or array that this model depends on such that they must be seeded first.  Examples:
+
+    {
+      depends: ['countries','states']
+    }
+
 #### key_attribute
 
 The attribute used to define uniqueness within the model.  Can be a single attribute or an array. Defaults to 'id'
@@ -185,6 +193,16 @@ Model method used for displaying updates to a model.
 #### use_line_number_as_id
 
 Use the line number of the seed file as the id
+
+## Incompatibilities from 0.0.x version
+
+Custom seeders should now be specified as a Class and not an instance (MySeeder instead of MySeeder.new)
+
+data_seeder_<config-item> methods within the models are no longer supported.
+
+Using the first line of txt, json, and yaml files as the config is no longer supported.  Move them to
+a separate .cfg file.
+
 
 TODO
 ----

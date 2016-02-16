@@ -1,6 +1,14 @@
 data_seeder Changelog
 =====================
 
+1.0.0 / 2016-02-15
+
+  - Allow multiple seed directories.
+  - Allow dependencies.
+  - Get rid of some superfluous features (see incompatibilities in README)
+  - Use separate instance of Loader for each seed file to clean things up and allow for
+    possible multithreading support.
+
 0.0.5 / 2015-10-27
 
   - Partial work around for JRuby 9030 bug where $INPUT_LINE_NUMBER isn't updated correctly
