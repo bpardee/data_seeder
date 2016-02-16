@@ -84,6 +84,24 @@ describe DataSeeder, :model do
     end
   end
 
+  describe 'when run with postprocess config' do
+    before do
+      @name      = "test.postprocess"
+      @dir       = "countries_csv"
+      @seed_dirs = setup_seed_dirs(@name, @dir)
+    end
+
+    after do
+      cleanup_seed_dir(@name)
+    end
+
+    it 'should allow the postprocess config to modify attributes' do
+      DataSeeder.run(seed_dirs: @seed_dirs)
+      assert_equal 'United States', Country.find_by(code: 'US').try(:name)
+    end
+  end
+
+
   describe 'when run with a custom loader' do
     before do
       @name      = 'test.custom'

@@ -144,6 +144,57 @@ Executing DataSeeder.run would result in the following:
       Creating 2: We are seriously foobared
       Creating 3: We are less seriously foobared
 
+## Configurable values
+
+#### key_attribute
+
+The attribute used to define uniqueness within the model.  Can be a single attribute or an array. Defaults to 'id'
+
+#### klass
+
+Defines the ActiveRecord Class if it can't be inferred from the seed file.
+
+#### line
+
+Proc used for converting a line to attributes (txt files only).
+
+Example:
+
+    {
+      key_attribute: 'code',
+      line: ->(line) {
+        { code: line[0,2], name: line[3...-1] }
+      }
+    }
+
+#### postprocess
+
+Modify the attributes from the seed file before applying them to the model.
+
+Example:
+
+    {
+      key_attribute: 'code',
+      postprocess: ->(attrs) {
+        {
+          code: attrs['country_code'],
+          name: attrs['country']
+        }
+      }
+    }
+
+#### purge
+
+Destroys rows that no longer exist in the seed file.
+
+#### update_display_method
+
+Model method used for displaying updates to a model.
+
+#### use_line_number_as_id
+
+Use the line number of the seed file as the id
+
 TODO
 ----
 
