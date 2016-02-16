@@ -158,15 +158,6 @@ Defines the ActiveRecord Class if it can't be inferred from the seed file.
 
 Proc used for converting a line to attributes (txt files only).
 
-Example:
-
-    {
-      key_attribute: 'code',
-      line: ->(line) {
-        { code: line[0,2], name: line[3...-1] }
-      }
-    }
-
 #### postprocess
 
 Modify the attributes from the seed file before applying them to the model.
