@@ -1,6 +1,10 @@
 data_seeder Changelog
 =====================
 
+1.0.1 / 2016-02-17
+  - Deprecate class method default_config and prefer instance method instead
+    so it can be used in manual seeding.
+    
 1.0.0 / 2016-02-15
 
   - Allow multiple seed directories.

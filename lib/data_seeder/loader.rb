@@ -6,14 +6,17 @@ module DataSeeder
 
     def initialize(config)
       @seeder_config  = DataSeeder.config
-      @config         = config
+      @config         = default_config.merge(config)
       @key_attribute  = config[:key_attribute] || :id
       @klass          = config[:klass]
       @path           = config[:path]
       @path_minus_ext = config[:path_minus_ext]
-      # Default purge to true if unspecified
-      @config[:purge] = true unless config.has_key?(:purge)
       @old_ids        = Set.new
+    end
+
+    # Override with config defaults
+    def default_config
+      { purge: true }
     end
 
     def logger

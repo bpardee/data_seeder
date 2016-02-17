@@ -21,13 +21,17 @@ describe DataSeeder, :model do
       assert_equal 'Kentucky', State.find_by(code: 'KV').try(:name)
       assert_equal 'Vermount', State.find_by(code: 'VT').try(:name)
       modify_seed_file(@name, 'states_txt/states.txt') do |body|
-        body.sub('KV Kentucky', 'KY Kentucky').sub('VT Vermount', 'VT Vermont')
+        body.sub('KV Kentucky', 'KY Kentucky').
+             sub('VT Vermount', 'VT Vermont').
+             sub("TX Texas\n", '')
       end
       DataSeeder.run
-      assert_equal 50, State.count
+      assert_equal 49, State.count
       assert_equal 'Kentucky', State.find_by(code: 'KY').try(:name)
       assert_equal 'Vermont', State.find_by(code: 'VT').try(:name)
       assert_nil   State.find_by(code: 'KV')
+      # Oh no! Texas seceded
+      assert_nil   State.find_by(code: 'TX')
     end
   end
 

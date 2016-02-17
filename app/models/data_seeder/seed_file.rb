@@ -50,6 +50,7 @@ module DataSeeder
           DataSeeder.config.logger.warn "Warning: No loader for #{path}"
           return true
         end
+        # This is deprecated.  Use instance method instead so seeds can be manually loaded
         if loader_klass.respond_to?(:default_config)
           config = loader_klass.default_config.merge(config)
         end
