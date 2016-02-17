@@ -7,10 +7,10 @@ module DataSeeder
     def initialize(config)
       @seeder_config  = DataSeeder.config
       @config         = default_config.merge(config)
-      @key_attribute  = config[:key_attribute] || :id
-      @klass          = config[:klass]
-      @path           = config[:path]
-      @path_minus_ext = config[:path_minus_ext]
+      @key_attribute  = @config[:key_attribute] || :id
+      @klass          = @config[:klass]
+      @path           = @config[:path]
+      @path_minus_ext = @config[:path_minus_ext]
       @old_ids        = Set.new
     end
 
