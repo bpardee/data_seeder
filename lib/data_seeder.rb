@@ -63,9 +63,13 @@ module DataSeeder
     end
   end
 
-  def self.test_run(new_config={})
-    self.config.logger = Rails.logger
-    run(new_config)
+  # Deprecated
+  def self.test_run(newconfig={})
+    quiet_run(new_config)
+  end
+
+  def self.quiet_run(newconfig={})
+    run({logger: Rails.logger}.merge(new_config))
   end
 
   @@a_ord         = ?A.ord

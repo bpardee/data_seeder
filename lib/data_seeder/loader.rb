@@ -1,5 +1,3 @@
-require 'English'
-
 module DataSeeder
   module Loader
     attr_reader :seeder_config, :config, :key_attribute, :klass, :path, :path_minus_ext
@@ -66,9 +64,9 @@ module DataSeeder
       throw 'Must override load'
     end
 
-    # This doesn't work in some versions of JRuby (version 9.0.3.0?)
+    # Override for applicable loaders
     def line_number
-      $INPUT_LINE_NUMBER
+      raise "This loader doesn't suppoert line_number"
     end
 
     def save(attr)
@@ -108,15 +106,15 @@ module DataSeeder
     end
 
     def log_save(model)
-      logger.debug { "Saving #{model_info(model)}" }
+      logger.info { "Saving #{model_info(model)}" }
     end
 
     def log_update(model)
-      logger.debug { "Updating #{model_info(model, model.changes)}" }
+      logger.info { "Updating #{model_info(model, model.changes)}" }
     end
 
     def log_destroy(model)
-      logger.debug { "Destroying #{model_info(model)}" }
+      logger.info { "Destroying #{model_info(model)}" }
     end
 
     def log_indent(&block)

@@ -59,7 +59,7 @@ module DataSeeder
         loader                  = loader_klass.new(config)
         depends                 = loader.config[:depends]
         return false if depends && !self.class.processed?(depends)
-        DataSeeder.config.logger.debug { "Loading #{path}" }
+        DataSeeder.config.logger.info { "Loading #{path}" }
         DataSeeder.config.log_indent do
           File.open(path, 'r') do |io|
             loader.process(io)

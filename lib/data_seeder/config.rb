@@ -7,10 +7,16 @@ module DataSeeder
       @loaders          = default_loaders
       @verbose          = true
       @is_default       = true
-      @logger           = Logger.new($stdout)
-      @logger.formatter = ->(severity, datetime, progname, msg) { "#{@indent}#{msg}\n" }
       @indent_level     = 0
       @indent           = ''
+    end
+
+    def logger
+      @logger ||= begin
+        logger = Logger.new($stdout)
+        logger.formatter = ->(severity, datetime, progname, msg) { "#{@indent}#{msg}\n" }
+        logger
+      end
     end
 
     def default_loaders

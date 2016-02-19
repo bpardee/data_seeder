@@ -28,6 +28,10 @@ Add the following to your db/seeds.rb file
 
     DataSeeder.run
 
+Or if you prefer log messages go to the Rails logger instead of $stdout
+
+    DataSeeder.quiet_run
+
 Add seed files to the db/seed directory as necessary. For instance, suppose you have
 the following table:
 
@@ -87,7 +91,7 @@ You will probably want your test environment seeded also.  Adding the following 
 will seed your database prior to running tests but will redirect the output to the Rails.logger instead
 of stdout.
 
-    DataSeeder.test_run
+    DataSeeder.quiet_run
 
 ## Loaders
 
@@ -146,6 +150,10 @@ Executing DataSeeder.run would result in the following:
 
 ## Configurable values
 
+#### continue_on_exception (txt,csv)
+
+Continue processing lines if an exception occurs.
+
 #### depends
 
 Value or array that this model depends on such that they must be seeded first.  Examples:
@@ -162,9 +170,9 @@ The attribute used to define uniqueness within the model.  Can be a single attri
 
 Defines the ActiveRecord Class if it can't be inferred from the seed file.
 
-#### line
+#### line (txt)
 
-Proc used for converting a line to attributes (txt files only).
+Proc used for converting a line to attributes.
 
 #### postprocess
 
@@ -192,7 +200,8 @@ Model method used for displaying updates to a model.
 
 #### use_line_number_as_id
 
-Use the line number of the seed file as the id
+Use the line number of the seed file as the id.  Note that csv does not count the header
+in the line_number count.
 
 ## Incompatibilities from 0.0.x version
 
