@@ -68,7 +68,7 @@ module DataSeeder
     quiet_run(new_config)
   end
 
-  def self.quiet_run(newconfig={})
+  def self.quiet_run(new_config={})
     run({logger: Rails.logger}.merge(new_config))
   end
 

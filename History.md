@@ -1,6 +1,9 @@
 data_seeder Changelog
 =====================
 
+1.0.4 / 2016-02-19
+  - Fix bug in quiet_run
+
 1.0.3 / 2016-02-19
   - Log messages are now info instead of debug.
   - DataSeeder.test_run deprecated in favor of quiet_run which logs to Rails.log instead of $stdout
