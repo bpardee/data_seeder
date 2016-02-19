@@ -64,7 +64,7 @@ module DataSeeder
   end
 
   # Deprecated
-  def self.test_run(newconfig={})
+  def self.test_run(new_config={})
     quiet_run(new_config)
   end
 

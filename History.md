@@ -1,6 +1,9 @@
 data_seeder Changelog
 =====================
 
+1.0.5 / 2016-02-19
+  - Fix bug in test_run (Yes, I'm a dumbass)
+
 1.0.4 / 2016-02-19
   - Fix bug in quiet_run
 
