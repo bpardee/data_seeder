@@ -5,8 +5,8 @@ data_seeder Changelog
   - Log messages are now info instead of debug.
   - DataSeeder.test_run deprecated in favor of quiet_run which logs to Rails.log instead of $stdout
   - Config continue_on_exception added for txt,csv.
-  - No longer use $LINE_NUMBER to count line numbers as JRuby has issues.
-  
+  - No longer use $INPUTLINE_NUMBER to count line numbers as JRuby has issues.
+
 1.0.2 / 2016-02-17
   - Bug fix the default_config stuff.
 
