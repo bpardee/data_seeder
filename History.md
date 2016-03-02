@@ -1,6 +1,9 @@
 data_seeder Changelog
 =====================
 
+1.0.6 / 2016-03-02
+  - Allow config open_options to allow setting options on File.open (i.e., open_options: {encoding: 'ISO-8859-1:UTF-8'})
+
 1.0.5 / 2016-02-19
   - Fix bug in test_run (Yes, I'm a dumbass)
 

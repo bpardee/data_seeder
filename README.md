@@ -174,6 +174,10 @@ Defines the ActiveRecord Class if it can't be inferred from the seed file.
 
 Proc used for converting a line to attributes.
 
+#### open_options
+
+Options passed to File.open to allow encoding values, etc. (ex: open_options: {encoding: 'ISO-8859-1:UTF-8'})
+
 #### postprocess
 
 Modify the attributes from the seed file before applying them to the model.
