@@ -61,7 +61,7 @@ module DataSeeder
         return false if depends && !self.class.processed?(depends)
         DataSeeder.config.logger.info { "Loading #{path}" }
         DataSeeder.config.log_indent do
-          File.open(path, 'r') do |io|
+          File.open(path, 'r', config[:file_options]) do |io|
             loader.process(io)
           end
           self.sha256 = new_sha256
