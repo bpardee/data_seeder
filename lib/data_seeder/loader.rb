@@ -22,9 +22,11 @@ module DataSeeder
     end
 
     def process(io)
+      call_config(:setup)
       setup
       load(io)
       teardown
+      call_config(:teardown)
     end
 
     def setup
@@ -66,7 +68,7 @@ module DataSeeder
 
     # Override for applicable loaders
     def line_number
-      raise "This loader doesn't suppoert line_number"
+      raise "This loader doesn't support line_number"
     end
 
     def save(attr)
@@ -132,6 +134,16 @@ module DataSeeder
         end
       end
       return nil
+    end
+
+    def call_config(name, *args)
+      if val = config[name]
+        if val.kind_of?(Proc)
+          return val.call(*args)
+        else
+          return val
+        end
+      end
     end
   end
 end
