@@ -1,10 +1,10 @@
 module DataSeeder
   module Loader
-    attr_reader :seeder_config, :config, :key_attribute, :klass, :path, :path_minus_ext
+    attr_reader :config, :logger, :key_attribute, :klass, :path, :path_minus_ext
 
     def initialize(config)
-      @seeder_config  = DataSeeder.config
       @config         = default_config.merge(config)
+      @logger         = @config[:logger] || DataSeeder.config.logger
       @key_attribute  = @config[:key_attribute] || :id
       @klass          = @config[:klass]
       @path           = @config[:path]
@@ -15,10 +15,6 @@ module DataSeeder
     # Override with config defaults
     def default_config
       { purge: true }
-    end
-
-    def logger
-      @seeder_config.logger
     end
 
     def process(io)
@@ -120,7 +116,10 @@ module DataSeeder
     end
 
     def log_indent(&block)
-      @seeder_config.log_indent(&block)
+      # If we used the default logger, then indent, else no-op
+      if @logger == DataSeeder.config.logger
+        DataSeeder.config.log_indent(&block)
+      end
     end
 
     def call_method(name, *args)

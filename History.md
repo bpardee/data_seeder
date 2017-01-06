@@ -1,6 +1,9 @@
 data_seeder Changelog
 =====================
 
+1.0.7 / 2017-01-06
+  - Allow configurable logger per loader
+
 1.0.6 / 2016-03-02
   - Allow config open_options to allow setting options on File.open (i.e., open_options: {encoding: 'ISO-8859-1:UTF-8'})
 

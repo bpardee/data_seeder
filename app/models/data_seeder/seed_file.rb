@@ -4,7 +4,7 @@ module DataSeeder
   class SeedFile < ActiveRecord::Base
     def self.file_hash
       @file_hash ||= begin
-        hash = Hash.new { |hash, path| hash[path] = new(path: path) }
+        hash = Hash.new { |h, path| h[path] = new(path: path) }
         all.each do |seed_file|
           hash[seed_file.path] = seed_file
         end
@@ -41,7 +41,7 @@ module DataSeeder
         end
         begin
           config[:klass] ||= path_minus_ext.classify.constantize
-        rescue NameError => e
+        rescue NameError => _
         end
         ext = File.extname(self.path)[1..-1]
         return true unless ext
