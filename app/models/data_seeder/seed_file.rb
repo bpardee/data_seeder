@@ -29,6 +29,10 @@ module DataSeeder
       self.processed_set.proper_superset?(Array(paths).to_set)
     end
 
+    def self.reset
+      @file_hash = nil
+    end
+
     def load
       new_sha256 = Digest::SHA256.file(path).hexdigest
       dot_index      = path.rindex('.')

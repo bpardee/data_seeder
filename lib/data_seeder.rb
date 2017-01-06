@@ -15,6 +15,7 @@ module DataSeeder
 
   def self.reset
     @config = Config.new
+    SeedFile.reset
   end
 
   def self.configure

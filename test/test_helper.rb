@@ -10,3 +10,5 @@ require "minitest/rails"
 # to be shown.
 Minitest.backtrace_filter = Minitest::BacktraceFilter.new
 ActiveRecord::Migration.maintain_test_schema!
+support_dir =
+Dir[File.expand_path('../support/**/*.rb', __FILE__)].each { |f| require f }
