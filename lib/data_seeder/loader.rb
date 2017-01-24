@@ -84,6 +84,7 @@ module DataSeeder
       model = self.klass.find_or_initialize_by(find_hash)
       model.attributes = attr
       save_model(model)
+      return model
     end
 
     def save_model(model)
