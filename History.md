@@ -1,6 +1,9 @@
 data_seeder Changelog
 =====================
 
+1.0.9 / 2017-02-16
+  - Fix bug where custom loggers aren't running log_indent block.
+
 1.0.8 / 2017-01-24
   - Return the model in Loader#save so extenders can manipulate.
 

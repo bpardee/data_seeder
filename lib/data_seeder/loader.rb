@@ -120,6 +120,8 @@ module DataSeeder
       # If we used the default logger, then indent, else no-op
       if @logger == DataSeeder.config.logger
         DataSeeder.config.log_indent(&block)
+      else
+        yield
       end
     end
 
