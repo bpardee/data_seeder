@@ -39,4 +39,7 @@ Rails.application.configure do
 
   config.active_support.test_order = :random
 
+  if Rails.version.to_f >= 5.2 && Rails.version.to_i < 6
+    config.active_record.sqlite3.represent_boolean_as_integer = true
+  end
 end

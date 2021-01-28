@@ -1,6 +1,8 @@
 module DataSeeder
   class Config
-    attr_accessor :seed_dirs, :logger, :loaders, :verbose
+    attr_accessor :seed_dirs, :verbose
+    attr_reader :loaders
+    attr_writer :logger
 
     def initialize
       @seed_dirs        = ['db/seed'].freeze

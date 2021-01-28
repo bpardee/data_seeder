@@ -1,4 +1,4 @@
-class CreateAppErrors < ActiveRecord::Migration
+class CreateAppErrors < ActiveRecord::Migration[4.2]
   def change
     create_table :app_errors do |t|
       t.references :app, index: true

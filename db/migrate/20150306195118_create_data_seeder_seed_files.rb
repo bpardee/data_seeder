@@ -1,4 +1,4 @@
-class CreateDataSeederSeedFiles < ActiveRecord::Migration
+class CreateDataSeederSeedFiles < ActiveRecord::Migration[4.2]
   def change
     create_table :data_seeder_seed_files do |t|
       t.string :path, null: false
