@@ -10,18 +10,21 @@ gemspec
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
 
+gem 'appraisal'
+gem 'rails', '~> 6.1.0'
 gem 'sqlite3', platform: :ruby
 gem 'jdbc-sqlite3', platform: :jruby
 gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby
+gem 'sprockets', '< 4.0'
 
 # To use debugger
 # gem 'debugger'
-group :test, :development do
-  gem 'pry'
-  gem 'pry-doc'
-  gem 'pry-plus', platform: :ruby, git: 'git://github.com/avantcredit/pry-plus'
-  gem 'pry-rails'
-end
+# group :test, :development do
+#   gem 'pry'
+#   gem 'pry-doc'
+#   gem 'pry-plus', platform: :ruby, git: 'git://github.com/avantcredit/pry-plus'
+#   gem 'pry-rails'
+# end
 
 group :test do
   gem 'minitest-rails'
