@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -15,11 +14,10 @@ ActiveRecord::Schema.define(version: 20150313172719) do
 
   create_table "app_errors", force: :cascade do |t|
     t.integer "app_id"
-    t.string  "code"
-    t.string  "message"
+    t.string "code"
+    t.string "message"
+    t.index ["app_id"], name: "index_app_errors_on_app_id"
   end
-
-  add_index "app_errors", ["app_id"], name: "index_app_errors_on_app_id"
 
   create_table "apps", force: :cascade do |t|
     t.string "name"
@@ -31,11 +29,10 @@ ActiveRecord::Schema.define(version: 20150313172719) do
   end
 
   create_table "data_seeder_seed_files", force: :cascade do |t|
-    t.string "path",   null: false
+    t.string "path", null: false
     t.string "sha256", null: false
+    t.index ["path"], name: "index_data_seeder_seed_files_on_path", unique: true
   end
-
-  add_index "data_seeder_seed_files", ["path"], name: "index_data_seeder_seed_files_on_path", unique: true
 
   create_table "states", force: :cascade do |t|
     t.string "code"
